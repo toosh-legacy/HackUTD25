@@ -1,0 +1,12 @@
+.map-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 4rem);
+  padding: 4rem 1rem;
+}
+
+.map-container p {
+  color: #374151;
+  font-size: 1.25rem;
+}
