@@ -1,0 +1,26 @@
+.home-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 4rem);
+  padding: 2rem;
+}
+
+.home-content {
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.home-title {
+  color: #e20074;
+  margin-bottom: 3rem;
+}
+
+.gauges-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
