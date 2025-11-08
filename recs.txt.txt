@@ -1,0 +1,28 @@
+1) web scrapper***
+2) feedback option - which area problem  -3 different parameters
+3) login page
+4) Admin alert system
+5) categorizing alerts
+6) chatbot
+admin page idea - get the map
+
+status page of server and/or problem
+notifications/alerts
+cutomers talking to othercustomers
+
+
+
+Pages:
+login/sign up
+admin sing in
+home page
+map page
+contact me page
+report a problem page - report logs
+status page
+
+
+
+Right now:
+
+
