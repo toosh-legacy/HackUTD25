@@ -1,5 +1,5 @@
 1) web scrapper***
-2) feedback option - which area problem  -3 different parameters
+2) feedback option - which area problem  -3 different parameters - net promotor score
 3) login page
 4) Admin alert system
 5) categorizing alerts
