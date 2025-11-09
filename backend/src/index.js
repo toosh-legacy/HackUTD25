@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import reportsRouter from './routes/reports.js';
 import statusRouter from './routes/status.js';
+import chatRouter from './routes/chat.js';
 
 // Error handling middleware
 const errorHandler = (err, req, res, next) => {
@@ -17,7 +18,7 @@ const errorHandler = (err, req, res, next) => {
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,6 +31,7 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().t
 // API routes
 app.use('/api/reports', reportsRouter);
 app.use('/api/status', statusRouter);
+app.use('/api/chat', chatRouter);
 
 // Error handling
 app.use(errorHandler);
