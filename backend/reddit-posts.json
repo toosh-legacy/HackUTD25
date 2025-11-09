@@ -1,0 +1,29 @@
+{
+  "posts": [
+    {
+      "id": "1abc123",
+      "subreddit": "tmobile",
+      "title": "T-Mobile 5G speeds are incredible!",
+      "content": "Just tested my 5G connection and got 800 Mbps download. This is amazing!",
+      "created_at": "2025-11-09T10:30:00.000Z",
+      "score": 45
+    },
+    {
+      "id": "2def456",
+      "subreddit": "tmobile",
+      "title": "Customer service experience",
+      "content": "Had an issue with billing and they resolved it quickly. Great support!",
+      "created_at": "2025-11-09T09:15:00.000Z",
+      "score": 32
+    },
+    {
+      "id": "3ghi789",
+      "subreddit": "tmobileisp",
+      "title": "Home internet coverage question",
+      "content": "Thinking about switching to T-Mobile home internet. Anyone have experience?",
+      "created_at": "2025-11-09T08:45:00.000Z",
+      "score": 18
+    }
+  ],
+  "timestamp": "2025-11-09T12:00:00.000Z"
+}

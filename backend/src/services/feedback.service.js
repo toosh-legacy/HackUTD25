@@ -67,7 +67,21 @@ export class FeedbackService {
         .collection('user_feedback')
         .get();
 
-      if (snapshot.empty) return 50; // Default neutral value
+      // Fetch Reddit happiness index
+      let redditHappiness = null;
+      try {
+        const response = await fetch('http://localhost:3001/api/happiness');
+        const data = await response.json();
+        redditHappiness = data.happiness;
+        console.log('📊 Reddit happiness fetched:', redditHappiness);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch Reddit happiness, continuing without it:', error.message);
+      }
+
+      // If no user feedback and no Reddit data, return default
+      if (snapshot.empty && !redditHappiness) {
+        return 50;
+      }
 
       // Group by userId and get the most recent for each user
       const userFeedbackMap = new Map();
@@ -84,12 +98,30 @@ export class FeedbackService {
       // Calculate average from unique users
       const uniqueFeedbacks = Array.from(userFeedbackMap.values());
       
-      if (uniqueFeedbacks.length === 0) return 50;
+      // Calculate user average
+      let userAverage = 50;
+      if (uniqueFeedbacks.length > 0) {
+        const sum = uniqueFeedbacks.reduce((acc, curr) => acc + curr.rating, 0);
+        userAverage = sum / uniqueFeedbacks.length;
+      }
 
-      const sum = uniqueFeedbacks.reduce((acc, curr) => acc + curr.rating, 0);
-      const average = Math.round(sum / uniqueFeedbacks.length);
+      // If we have Reddit happiness, include it in the average
+      // Reddit happiness gets equal weight to all user feedback combined
+      let finalAverage;
+      if (redditHappiness !== null && uniqueFeedbacks.length > 0) {
+        finalAverage = Math.round((userAverage + redditHappiness) / 2);
+        console.log(`📈 Combined average: Users=${Math.round(userAverage)}%, Reddit=${Math.round(redditHappiness)}%, Final=${finalAverage}%`);
+      } else if (redditHappiness !== null) {
+        // Only Reddit data available
+        finalAverage = Math.round(redditHappiness);
+        console.log(`📈 Using Reddit happiness only: ${finalAverage}%`);
+      } else {
+        // Only user feedback available
+        finalAverage = Math.round(userAverage);
+        console.log(`📈 Using user feedback only: ${finalAverage}%`);
+      }
       
-      return average;
+      return finalAverage;
     } catch (error) {
       console.error('Error calculating average feedback:', error);
       throw error;
