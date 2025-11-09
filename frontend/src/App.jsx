@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './contexts/AuthContext';
+import ChatBotTab from './components/ChatBotTab'; // ✅ Import here
 import './css/App.css';
 
 export default function App() {
@@ -16,14 +17,17 @@ export default function App() {
         <div className="app-container">
           <Navbar />
           <main className="main-content">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-            <Route path="/report" element={<PrivateRoute><ReportProblem /></PrivateRoute>} />
-            <Route path="/status" element={<PrivateRoute><Status /></PrivateRoute>} />
-          </Routes>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+              <Route path="/report" element={<PrivateRoute><ReportProblem /></PrivateRoute>} />
+              <Route path="/status" element={<PrivateRoute><Status /></PrivateRoute>} />
+            </Routes>
           </main>
+
+          {/* 👇 Fixed chat tab visible everywhere */}
+          <ChatBotTab />
         </div>
       </AuthProvider>
     </Router>
