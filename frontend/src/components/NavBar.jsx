@@ -8,7 +8,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
-  const adminEmails = ['sai@gmail.com', 'fanenfury@gmail.com'];
+  const adminEmails = ['sai@gmail.com', 'fanenfury@gmail.com', 'xyz@gmail.com'];
   const isAdmin = user && adminEmails.includes(user.email);
 
   const navItems = [

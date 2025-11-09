@@ -65,7 +65,7 @@ export default function Home() {
   return (
     <div className="home-container">
       <div className="home-content">
-        <h1 className="home-title">T-Mobile Customer Sentiment Analysis</h1>
+        <h1 className="home-title">Happy Mobile - Customer Sentiment Dashboard</h1>
         <div className="home-layout">
           {/* Left side - Reddit Posts */}
           <div className="reddit-posts-section">

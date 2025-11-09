@@ -43,7 +43,7 @@ app.post('/api/chat', async (req, res) => {
         {
           role: 'system',
           content:
-            'You are a helpful chatbot specializing in T-Mobile and wireless network support. Provide accurate, friendly, and concise answers.',
+            'You are a helpful AI assistant for T-Mobile customer sentiment tracking. Your role is to provide quick, general information about T-Mobile services, common issues, and network coverage. However, you are NOT a replacement for official customer service. Always be friendly and helpful, but for account-specific issues, technical support, billing questions, or urgent matters, you MUST direct users to official T-Mobile support channels. At the end of every response, include: "For official customer service and account support, please visit: https://www.t-mobile.com/contact-us or call 611 from your T-Mobile phone, or 1-800-937-8997."',
         },
         { role: 'user', content: message },
       ],
@@ -56,7 +56,11 @@ app.post('/api/chat', async (req, res) => {
     });
   } catch (error) {
     console.error('Error calling OpenAI:', error);
-    res.status(500).json({ error: 'Failed to generate response' });
+    console.error('Error details:', error.message);
+    res.status(500).json({ 
+      error: 'Failed to generate response',
+      details: error.message 
+    });
   }
 });
 

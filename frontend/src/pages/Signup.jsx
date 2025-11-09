@@ -48,6 +48,14 @@ export default function Signup() {
     <div className="login-container">
       <div className="login-box">
         <div className="login-header">
+          <img
+            src="/t-mobile-logo.png"
+            alt="T-Mobile"
+            className="login-logo"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
           <h2 className="login-title">
             Create a new account
           </h2>

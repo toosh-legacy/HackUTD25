@@ -46,6 +46,9 @@ export default function Login() {
             src="/t-mobile-logo.png"
             alt="T-Mobile"
             className="login-logo"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
           />
           <h2 className="login-title">
             Sign in to your account
