@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { STATES, PROBLEM_CATEGORIES } from '../constants';
 import '../css/ReportProblem.css';
 
 export default function ReportProblem() {
@@ -11,32 +12,7 @@ export default function ReportProblem() {
   
   const [logs, setLogs] = useState([]);
 
-  const categories = [
-    'Mobile Phone',
-    '5G Home Internet',
-    'No Signal',
-    'Website',
-    'TV Streaming',
-    'Total Blackout',
-    'Texting',
-    'T-Life App',
-    'Mobile Internet',
-    'Mobile App',
-    'Email'
-  ];
 
-  const states = [
-    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
-    'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
-    'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-    'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-    'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
-    'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-    'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
-    'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
-    'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
-    'West Virginia', 'Wisconsin', 'Wyoming'
-  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
