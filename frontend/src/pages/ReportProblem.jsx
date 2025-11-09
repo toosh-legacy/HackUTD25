@@ -57,7 +57,7 @@ export default function ReportProblem() {
                 className="form-select"
               >
                 <option value="">Select a category...</option>
-                {categories.map((cat) => (
+                {PROBLEM_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
@@ -74,7 +74,7 @@ export default function ReportProblem() {
                 placeholder="Type or select a state..."
               />
               <datalist id="states-list">
-                {states.map((state) => (
+                {STATES.map((state) => (
                   <option key={state} value={state} />
                 ))}
               </datalist>
