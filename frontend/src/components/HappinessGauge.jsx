@@ -2,15 +2,20 @@ import { useState, useEffect } from 'react';
 import { useFeedback } from '../hooks/useFeedback';
 import '../css/HappinessGauge.css';
 
-export default function HappinessGauge({ onChange, label, isReadOnly = false }) {
+export default function HappinessGauge({ onChange, label, isReadOnly = false, value }) {
   const { userFeedback, averageFeedback, submitFeedback, loading } = useFeedback();
   const [happiness, setHappiness] = useState(50);
 
   useEffect(() => {
-    if (userFeedback?.rating) {
+    // If a value prop is provided (for overall happiness), use it
+    if (value !== undefined && value !== null) {
+      setHappiness(value);
+    } 
+    // Otherwise, use user's feedback (for personal happiness)
+    else if (userFeedback?.rating) {
       setHappiness(userFeedback.rating);
     }
-  }, [userFeedback]);
+  }, [userFeedback, value]);
   
   const currentValue = happiness;
 

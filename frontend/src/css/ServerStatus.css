@@ -1,0 +1,226 @@
+/* Server Status Page Styles */
+.server-status-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.server-status-container h1 {
+  color: #1f2937;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  border-bottom: 3px solid #e20074;
+  padding-bottom: 0.5rem;
+}
+
+/* Status Display Section */
+.status-display {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+/* Status Badge */
+.status-badge {
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.status-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Status Colors */
+.bg-green-100 {
+  background-color: #d1fae5;
+}
+
+.text-green-700 {
+  color: #047857;
+}
+
+.bg-yellow-100 {
+  background-color: #fef3c7;
+}
+
+.text-yellow-700 {
+  color: #b45309;
+}
+
+.bg-red-100 {
+  background-color: #fee2e2;
+}
+
+.text-red-700 {
+  color: #b91c1c;
+}
+
+/* Control Buttons */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.control-button {
+  padding: 0.875rem 1.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.control-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.control-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary Button (Cycle Status) */
+.btn-primary {
+  background: linear-gradient(135deg, #e20074 0%, #c00060 100%);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c00060 0%, #a00050 100%);
+}
+
+/* Danger Button (Force Down) */
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* Info Section */
+.info-section {
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  border-left: 4px solid #e20074;
+}
+
+.info-section p {
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.info-section p:last-child {
+  margin-bottom: 0;
+}
+
+.info-section strong {
+  color: #1f2937;
+}
+
+/* Status Icons */
+.status-icon {
+  font-size: 1.5rem;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Loading State */
+.loading-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .server-status-container {
+    padding: 1rem;
+  }
+
+  .server-status-container h1 {
+    font-size: 2rem;
+  }
+
+  .status-display {
+    padding: 1.5rem;
+  }
+
+  .status-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status-badge {
+    font-size: 1.1rem;
+    padding: 0.875rem 1.5rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .control-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

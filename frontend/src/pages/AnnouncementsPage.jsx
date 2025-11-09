@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGlobal } from "../contexts/GlobalContext";
+import "../css/Announcements.css";
 
 export default function AnnouncementsPage() {
   const { announcements, addAnnouncement } = useGlobal();
@@ -27,50 +28,71 @@ export default function AnnouncementsPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Announcements</h1>
+    <div className="announcements-container">
+      <h1>Manage Announcements</h1>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="error-alert">
           {error}
         </div>
       )}
 
-      <div className="flex flex-col gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Title"
-          value={newAnnouncement.title}
-          onChange={(e) => setNewAnnouncement({ ...newAnnouncement, title: e.target.value })}
-          className="border p-2 rounded"
-          disabled={loading}
-        />
-        <textarea
-          placeholder="Message"
-          value={newAnnouncement.message}
-          onChange={(e) => setNewAnnouncement({ ...newAnnouncement, message: e.target.value })}
-          className="border p-2 rounded"
-          disabled={loading}
-        />
+      <div className="announcement-form">
+        <div className="form-group">
+          <label htmlFor="announcement-title">Title</label>
+          <input
+            id="announcement-title"
+            type="text"
+            placeholder="Enter announcement title"
+            value={newAnnouncement.title}
+            onChange={(e) => setNewAnnouncement({ ...newAnnouncement, title: e.target.value })}
+            className="form-input"
+            disabled={loading}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="announcement-message">Message</label>
+          <textarea
+            id="announcement-message"
+            placeholder="Enter announcement message"
+            value={newAnnouncement.message}
+            onChange={(e) => setNewAnnouncement({ ...newAnnouncement, message: e.target.value })}
+            className="form-textarea"
+            disabled={loading}
+          />
+        </div>
         <button
           onClick={handleAdd}
           disabled={loading || !newAnnouncement.title.trim()}
-          className="bg-blue-600 text-white px-4 py-2 rounded w-fit hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="submit-button"
         >
-          {loading ? 'Adding...' : 'Add Announcement'}
+          {loading ? (
+            <>
+              <span className="loading-spinner"></span>
+              Adding...
+            </>
+          ) : (
+            'Add Announcement'
+          )}
         </button>
       </div>
 
-      <div className="space-y-2">
-        {announcements.map((a) => (
-          <div key={a.id} className="border p-3 rounded-lg shadow-sm">
-            <h3 className="font-semibold">{a.title}</h3>
-            <p className="text-gray-600 text-sm">{a.message}</p>
-            <p className="text-xs text-gray-400 mt-2">
-              {a.createdAt && new Date(a.createdAt).toLocaleString()}
-            </p>
+      <div className="announcements-list">
+        {announcements.length === 0 ? (
+          <div className="empty-state">
+            No announcements yet. Create your first one above!
           </div>
-        ))}
+        ) : (
+          announcements.map((a) => (
+            <div key={a.id} className="announcement-card">
+              <h3>{a.title}</h3>
+              <p>{a.message}</p>
+              <p className="announcement-timestamp">
+                {a.createdAt && new Date(a.createdAt).toLocaleString()}
+              </p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

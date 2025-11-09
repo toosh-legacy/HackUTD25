@@ -1,6 +1,7 @@
 import { db } from '../firebase.js';
 
 export class ReportsService {
+  // Get all reports (admin only) - includes both active and resolved
   static async getReports(limit = 50, lastId = null) {
     try {
       let query = db.collection('reports')
@@ -23,8 +24,30 @@ export class ReportsService {
     }
   }
 
+  // Get reports for a specific user
+  static async getUserReports(userId, limit = 50) {
+    try {
+      const snapshot = await db.collection('reports')
+        .where('userId', '==', userId)
+        .limit(Number(limit))
+        .get();
+      
+      const reports = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      reports.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      return reports;
+    } catch (error) {
+      console.error('Error getting user reports:', error);
+      throw error;
+    }
+  }
+
   static async createReport(reportData, userId) {
-    const { title, description, latitude, longitude, severity = 1 } = reportData;
+    const { title, description, latitude, longitude, location, category, severity = 1 } = reportData;
     
     const reportRef = db.collection('reports').doc();
     await reportRef.set({
@@ -32,13 +55,33 @@ export class ReportsService {
       description,
       latitude: latitude || null,
       longitude: longitude || null,
+      location: location || null,
+      category: category || title,
       severity,
       userId,
+      status: 'active',
       createdAt: new Date().toISOString()
     });
 
     const doc = await reportRef.get();
     return { id: doc.id, ...doc.data() };
+  }
+
+  // Resolve a report (admin only)
+  static async resolveReport(reportId) {
+    try {
+      const reportRef = db.collection('reports').doc(reportId);
+      await reportRef.update({
+        status: 'resolved',
+        resolvedAt: new Date().toISOString()
+      });
+      
+      const doc = await reportRef.get();
+      return { id: doc.id, ...doc.data() };
+    } catch (error) {
+      console.error('Error resolving report:', error);
+      throw error;
+    }
   }
 
   static async getReportsByLocation(lat, lng, radiusKm = 5) {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGlobal } from "../contexts/GlobalContext";
+import "../css/ServerStatus.css";
 
 export default function ServerStatusPage() {
   const { serverStatus, setServerStatus, cycleServerStatus } = useGlobal();
@@ -39,39 +40,66 @@ export default function ServerStatusPage() {
     return "bg-red-100 text-red-700";
   };
 
+  const statusIcon = () => {
+    if (serverStatus === "online") return "🟢";
+    if (serverStatus === "maintenance") return "🟠";
+    return "🔴";
+  };
+
   const statusText = () => {
-    if (serverStatus === "online") return "🟢 Online";
-    if (serverStatus === "maintenance") return "🟠 Maintenance Mode";
-    return "🔴 Down";
+    if (serverStatus === "online") return "Online";
+    if (serverStatus === "maintenance") return "Maintenance Mode";
+    return "Down";
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Server Status</h1>
-      <div className="flex items-center gap-4">
-        <div className={`px-4 py-2 rounded-lg font-semibold ${statusStyle()}`}>
-          {statusText()}
+    <div className="server-status-container">
+      <h1>Server Status Management</h1>
+      
+      <div className="status-display">
+        <div className="status-header">
+          <div className={`status-badge ${statusStyle()}`}>
+            <span className="status-icon">{statusIcon()}</span>
+            {statusText()}
+          </div>
+          
+          <div className="button-group">
+            <button
+              onClick={handleCycleStatus}
+              disabled={loading}
+              className="control-button btn-primary"
+            >
+              {loading ? (
+                <span className="loading-text">
+                  <span className="loading-spinner"></span>
+                  Updating...
+                </span>
+              ) : (
+                nextLabel()
+              )}
+            </button>
+            <button
+              onClick={handleForceDown}
+              disabled={loading}
+              className="control-button btn-danger"
+            >
+              {loading ? (
+                <span className="loading-text">
+                  <span className="loading-spinner"></span>
+                  Updating...
+                </span>
+              ) : (
+                'Force Down'
+              )}
+            </button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleCycleStatus}
-            disabled={loading}
-            className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Updating...' : nextLabel()}
-          </button>
-          <button
-            onClick={handleForceDown}
-            disabled={loading}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            Force Down
-          </button>
+
+        <div className="info-section">
+          <p><strong>Real-time Updates:</strong> Changes will be visible to all users immediately.</p>
+          <p><strong>Persistence:</strong> Status updates are saved to Firebase and will persist across sessions.</p>
+          <p><strong>Current Status:</strong> The server is currently in <strong>{statusText()}</strong> mode.</p>
         </div>
-      </div>
-      <div className="mt-4 text-sm text-gray-600">
-        <p>Changes will be visible to all users in real-time.</p>
-        <p className="mt-2">Note: Status updates are saved to Firebase and will persist across sessions.</p>
       </div>
     </div>
   );

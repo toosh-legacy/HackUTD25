@@ -1,34 +1,68 @@
 import { useState, useCallback } from 'react';
-import { ReportsService } from '../services/firebase.service';
+import { auth } from '../firebase';
 
 export function useReports() {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [lastDoc, setLastDoc] = useState(null);
 
   const fetchReports = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await ReportsService.getReports(50, lastDoc);
-      setReports(prev => [...prev, ...data]);
-      if (data.length > 0) {
-        setLastDoc(data[data.length - 1]);
+      
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('User not authenticated');
       }
+      
+      const token = await user.getIdToken();
+      const response = await fetch('http://localhost:4000/api/reports/all', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch reports');
+      }
+      
+      const data = await response.json();
+      setReports(data.data || []);
     } catch (err) {
       setError(err.message);
+      console.error('Error fetching reports:', err);
     } finally {
       setLoading(false);
     }
-  }, [lastDoc]);
+  }, []);
 
   const createReport = useCallback(async (reportData) => {
     try {
       setLoading(true);
       setError(null);
-      const id = await ReportsService.createReport(reportData);
-      return id;
+      
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+      
+      const token = await user.getIdToken();
+      const response = await fetch('http://localhost:4000/api/reports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(reportData)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create report');
+      }
+      
+      const data = await response.json();
+      return data.data.id;
     } catch (err) {
       setError(err.message);
       throw err;
@@ -43,6 +77,6 @@ export function useReports() {
     error,
     fetchReports,
     createReport,
-    hasMore: reports.length > 0 && reports.length % 50 === 0
+    hasMore: false
   };
 }

@@ -9,7 +9,8 @@ export default function AdminRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (user.email !== 'sai@gmail.com') {
+  const adminEmails = ['sai@gmail.com', 'fanenfury@gmail.com'];
+  if (!adminEmails.includes(user.email)) {
     // Logged in but not admin → redirect home
     return <Navigate to="/" replace />;
   }

@@ -1,57 +1,90 @@
 import { useEffect } from "react";
 import { useReports } from "../hooks/useReports";
+import "../css/Alerts.css";
 
 export default function AlertsPage() {
-  // Use existing reports hook to fetch recent problem reports
   const { reports, fetchReports, loading, error } = useReports();
 
   useEffect(() => {
-    // fetch initial batch of recent reports
     fetchReports();
   }, [fetchReports]);
 
   const renderDate = (createdAt) => {
     if (!createdAt) return "Unknown";
-    // Firestore serverTimestamp may be a Timestamp with toDate()
-    if (typeof createdAt.toDate === "function") {
-      return createdAt.toDate().toLocaleString();
+    try {
+      return new Date(createdAt).toLocaleString();
+    } catch {
+      return String(createdAt);
     }
-    // If it's a JS Date already
-    if (createdAt instanceof Date) return createdAt.toLocaleString();
-    // If it's a number (ms)
-    if (typeof createdAt === 'number') return new Date(createdAt).toLocaleString();
-    // fallback
-    return String(createdAt);
   };
 
+  const activeReports = reports.filter(r => r.status !== 'resolved');
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Alert System</h1>
+    <div className="alerts-container">
+      <h1>Alert System - Active Reports</h1>
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Recent Problem Reports</h2>
+      <div className="alerts-summary">
+        <div className="summary-card alert-critical">
+          <div className="summary-icon">🚨</div>
+          <div className="summary-content">
+            <div className="summary-number">{activeReports.length}</div>
+            <div className="summary-label">Active Alerts</div>
+          </div>
+        </div>
+      </div>
 
-        {loading && <p>Loading reports…</p>}
-        {error && <p className="text-red-600">Error loading reports: {error}</p>}
+      <section className="alerts-section">
+        <div className="section-header">
+          <h2>Active Problem Reports</h2>
+          <button onClick={fetchReports} className="refresh-button" disabled={loading}>
+            🔄 {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
 
-        {!loading && reports.length === 0 && (
-          <p className="no-logs">No recent problem reports.</p>
+        {loading && reports.length === 0 && (
+          <div className="loading-state">Loading reports...</div>
+        )}
+        
+        {error && (
+          <div className="error-alert">
+            Error loading reports: {error}
+          </div>
         )}
 
-        <div className="grid gap-2">
-          {reports.map((r) => (
-            <div key={r.id} className="border p-3 rounded-lg shadow-sm">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold">{r.title || 'Untitled Report'}</h3>
-                  <p className="text-gray-600 text-sm">{r.description || r.message || 'No description'}</p>
+        {!loading && activeReports.length === 0 && !error && (
+          <div className="empty-state">
+            No active alerts. All systems operating normally! ✅
+          </div>
+        )}
+
+        <div className="alerts-grid">
+          {activeReports.map((r) => (
+            <div key={r.id} className="alert-card">
+              <div className="alert-header">
+                <div className="alert-title-section">
+                  <h3>{r.title || r.category || 'Untitled Report'}</h3>
+                  <span className="alert-badge">Active</span>
                 </div>
-                <div className="text-xs text-gray-500">{renderDate(r.createdAt)}</div>
+                <div className="alert-timestamp">{renderDate(r.createdAt)}</div>
               </div>
-              <div className="mt-2 text-sm text-gray-700">
-                <strong>Severity:</strong> {r.severity ?? 'N/A'}
-                {r.latitude && r.longitude && (
-                  <span className="ml-4">📍 {r.latitude.toFixed ? `${r.latitude.toFixed(4)}, ${r.longitude.toFixed(4)}` : `${r.latitude}, ${r.longitude}`}</span>
+              
+              <p className="alert-description">{r.description || r.message || 'No description provided'}</p>
+              
+              <div className="alert-footer">
+                {r.location && (
+                  <span className="alert-location">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    {r.location}
+                  </span>
+                )}
+                {r.severity && (
+                  <span className="alert-severity">
+                    Severity: {r.severity}
+                  </span>
                 )}
               </div>
             </div>

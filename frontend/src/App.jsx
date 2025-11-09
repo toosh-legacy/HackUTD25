@@ -21,6 +21,7 @@ import './css/App.css';
 import AlertsPage from './pages/AlertsPage';
 import AnnouncementsPage from './pages/AnnouncementsPage';
 import ServerStatusPage from './pages/ServerStatusPage';
+import AdminReportsPage from './pages/AdminReportsPage';
 
 export default function App() {
   const [initialized, setInitialized] = useState(false);
@@ -99,6 +100,7 @@ export default function App() {
                   <Route path="/alerts" element={<AdminRoute><AlertsPage /></AdminRoute>} />
                   <Route path="/announcements" element={<AdminRoute><AnnouncementsPage /></AdminRoute>} />
                   <Route path="/server-status" element={<AdminRoute><ServerStatusPage /></AdminRoute>} />
+                  <Route path="/admin/reports" element={<AdminRoute><AdminReportsPage /></AdminRoute>} />
 
                   <Route path="*" element={<Navigate to="/login" replace />} />
                 </Routes>

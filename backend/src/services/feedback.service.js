@@ -3,7 +3,13 @@ import { db } from '../firebase.js';
 export class FeedbackService {
   static async saveFeedback(userId, rating, additionalData = {}) {
     try {
-      const feedbackRef = db.collection('user_feedback').doc();
+      // Check if user already has feedback
+      const existingSnapshot = await db
+        .collection('user_feedback')
+        .where('userId', '==', userId)
+        .limit(1)
+        .get();
+
       const feedbackData = {
         userId,
         rating,
@@ -11,8 +17,23 @@ export class FeedbackService {
         timestamp: new Date().toISOString()
       };
 
-      await feedbackRef.set(feedbackData);
-      return { id: feedbackRef.id, ...feedbackData };
+      let feedbackRef;
+      
+      if (!existingSnapshot.empty) {
+        // Update existing feedback
+        feedbackRef = existingSnapshot.docs[0].ref;
+        await feedbackRef.update({
+          rating,
+          ...additionalData,
+          timestamp: new Date().toISOString()
+        });
+        return { id: feedbackRef.id, ...feedbackData };
+      } else {
+        // Create new feedback
+        feedbackRef = db.collection('user_feedback').doc();
+        await feedbackRef.set(feedbackData);
+        return { id: feedbackRef.id, ...feedbackData };
+      }
     } catch (error) {
       console.error('Error saving feedback:', error);
       throw error;
@@ -24,18 +45,15 @@ export class FeedbackService {
       const snapshot = await db
         .collection('user_feedback')
         .where('userId', '==', userId)
-        .limit(10)
+        .limit(1)
         .get();
 
       if (snapshot.empty) {
         return null;
       }
 
-      // Sort in memory instead of using orderBy to avoid index requirement
-      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      docs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      
-      return docs[0];
+      const doc = snapshot.docs[0];
+      return { id: doc.id, ...doc.data() };
     } catch (error) {
       console.error('Error getting user feedback:', error);
       throw error;
@@ -44,19 +62,34 @@ export class FeedbackService {
 
   static async getAverageFeedback() {
     try {
+      // Get the most recent feedback from each user (one entry per user)
       const snapshot = await db
         .collection('user_feedback')
-        .limit(100)
         .get();
 
-      const feedbacks = snapshot.docs.map(doc => doc.data());
-      if (feedbacks.length === 0) return 0;
+      if (snapshot.empty) return 50; // Default neutral value
 
-      // Sort in memory instead of using orderBy to avoid index requirement
-      feedbacks.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      // Group by userId and get the most recent for each user
+      const userFeedbackMap = new Map();
       
-      const sum = feedbacks.reduce((acc, curr) => acc + curr.rating, 0);
-      return sum / feedbacks.length;
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const existing = userFeedbackMap.get(data.userId);
+        
+        if (!existing || new Date(data.timestamp) > new Date(existing.timestamp)) {
+          userFeedbackMap.set(data.userId, data);
+        }
+      });
+
+      // Calculate average from unique users
+      const uniqueFeedbacks = Array.from(userFeedbackMap.values());
+      
+      if (uniqueFeedbacks.length === 0) return 50;
+
+      const sum = uniqueFeedbacks.reduce((acc, curr) => acc + curr.rating, 0);
+      const average = Math.round(sum / uniqueFeedbacks.length);
+      
+      return average;
     } catch (error) {
       console.error('Error calculating average feedback:', error);
       throw error;

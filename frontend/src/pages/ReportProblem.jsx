@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useAuth } from '../contexts/AuthContext';
 import { STATES, PROBLEM_CATEGORIES } from '../constants';
 import '../css/ReportProblem.css';
 
 export default function ReportProblem() {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     category: '',
     location: '',
@@ -15,13 +17,27 @@ export default function ReportProblem() {
 
   // Load reports when component mounts
   useEffect(() => {
-    fetchReports();
-  }, []);
+    if (user) {
+      fetchReports();
+    }
+  }, [user]);
 
   const fetchReports = async () => {
+    if (!user) return;
+    
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/api/reports');
+      const token = await user.getIdToken();
+      const response = await fetch('http://localhost:4000/api/reports', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch reports');
+      }
+      
       const data = await response.json();
       if (data.data) {
         setLogs(data.data);
@@ -42,12 +58,19 @@ export default function ReportProblem() {
       return;
     }
 
+    if (!user) {
+      toast.error('You must be logged in to submit a report');
+      return;
+    }
+
     try {
       setLoading(true);
+      const token = await user.getIdToken();
       const response = await fetch('http://localhost:4000/api/reports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           title: formData.category,
@@ -56,6 +79,10 @@ export default function ReportProblem() {
           category: formData.category
         }),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit report');
+      }
 
       const data = await response.json();
       
@@ -76,6 +103,13 @@ export default function ReportProblem() {
     }
   };
 
+  const getStatusBadge = (status) => {
+    if (status === 'resolved') {
+      return <span className="status-badge status-resolved">✓ Resolved</span>;
+    }
+    return <span className="status-badge status-active">Active</span>;
+  };
+
   return (
     <div className="report-container">
       <div className="report-content">
@@ -88,6 +122,7 @@ export default function ReportProblem() {
                 value={formData.category}
                 onChange={(e) => setFormData({...formData, category: e.target.value})}
                 className="form-select"
+                disabled={loading}
               >
                 <option value="">Select a category...</option>
                 {PROBLEM_CATEGORIES.map((cat) => (
@@ -105,6 +140,7 @@ export default function ReportProblem() {
                 onChange={(e) => setFormData({...formData, location: e.target.value})}
                 className="form-input"
                 placeholder="Type or select a state..."
+                disabled={loading}
               />
               <datalist id="states-list">
                 {STATES.map((state) => (
@@ -121,11 +157,12 @@ export default function ReportProblem() {
                 className="form-textarea"
                 placeholder="Describe the problem briefly..."
                 rows="4"
+                disabled={loading}
               />
             </div>
 
-            <button type="submit" className="submit-button">
-              Submit Log
+            <button type="submit" className="submit-button" disabled={loading}>
+              {loading ? 'Submitting...' : 'Submit Log'}
             </button>
           </form>
         </div>
@@ -142,9 +179,7 @@ export default function ReportProblem() {
                 <div key={log.id} className="log-card">
                   <div className="log-header">
                     <span className="log-category">{log.title || log.category}</span>
-                    <span className="log-timestamp">
-                      {log.createdAt ? new Date(log.createdAt).toLocaleString() : log.timestamp}
-                    </span>
+                    {getStatusBadge(log.status)}
                   </div>
                   {log.location && (
                     <div className="log-location">
@@ -156,6 +191,9 @@ export default function ReportProblem() {
                     </div>
                   )}
                   <p className="log-description">{log.description}</p>
+                  <span className="log-timestamp">
+                    {log.createdAt ? new Date(log.createdAt).toLocaleString() : log.timestamp}
+                  </span>
                 </div>
               ))
             )}

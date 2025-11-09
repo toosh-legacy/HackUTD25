@@ -8,6 +8,9 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
+  const adminEmails = ['sai@gmail.com', 'fanenfury@gmail.com'];
+  const isAdmin = user && adminEmails.includes(user.email);
+
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/report', label: 'Report a Problem' },
@@ -18,6 +21,7 @@ export default function Navbar() {
     { path: '/alerts', label: 'Alerts' },
     { path: '/announcements', label: 'Announcements' },
     { path: '/server-status', label: 'Server Status' },
+    { path: '/admin/reports', label: 'Manage Reports' },
   ];
 
   const handleLogout = async () => {
@@ -49,8 +53,8 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {/* 🛠️ Admin Dropdown (Only for sai@gmail.com) */}
-            {user?.email === 'sai@gmail.com' && (
+            {/* 🛠️ Admin Dropdown (Only for admin users) */}
+            {isAdmin && (
               <div
                 className="navbar-admin-dropdown"
                 onMouseEnter={() => setIsAdminMenuOpen(true)}
