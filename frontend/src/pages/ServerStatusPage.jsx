@@ -1,7 +1,31 @@
+import { useState } from "react";
 import { useGlobal } from "../contexts/GlobalContext";
 
 export default function ServerStatusPage() {
   const { serverStatus, setServerStatus, cycleServerStatus } = useGlobal();
+  const [loading, setLoading] = useState(false);
+
+  const handleCycleStatus = async () => {
+    setLoading(true);
+    try {
+      await cycleServerStatus();
+    } catch (error) {
+      console.error('Error cycling status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForceDown = async () => {
+    setLoading(true);
+    try {
+      await setServerStatus("down");
+    } catch (error) {
+      console.error('Error setting status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const nextLabel = () => {
     if (serverStatus === "online") return "Switch to Maintenance";
@@ -30,18 +54,24 @@ export default function ServerStatusPage() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={cycleServerStatus}
-            className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900"
+            onClick={handleCycleStatus}
+            disabled={loading}
+            className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {nextLabel()}
+            {loading ? 'Updating...' : nextLabel()}
           </button>
           <button
-            onClick={() => setServerStatus("down")}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            onClick={handleForceDown}
+            disabled={loading}
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             Force Down
           </button>
         </div>
+      </div>
+      <div className="mt-4 text-sm text-gray-600">
+        <p>Changes will be visible to all users in real-time.</p>
+        <p className="mt-2">Note: Status updates are saved to Firebase and will persist across sessions.</p>
       </div>
     </div>
   );
