@@ -93,7 +93,17 @@
 
 .profile-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+  transform: scale(1.05);
+}
+
+.profile-email {
+  margin-right: 0.5rem;
+  font-size: 0.875rem;
+  color: white;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (min-width: 640px) {

@@ -1,0 +1,20 @@
+{
+  "name": "hackutd25-backend",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev:simple": "nodemon src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.6.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "nodemon": "^2.0.22"
+  }
+}
