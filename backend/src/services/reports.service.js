@@ -2,22 +2,25 @@ import { db } from '../firebase.js';
 
 export class ReportsService {
   static async getReports(limit = 50, lastId = null) {
-    let query = db.collection('reports')
-      .orderBy('createdAt', 'desc')
-      .limit(Number(limit));
+    try {
+      let query = db.collection('reports')
+        .limit(Number(limit));
 
-    if (lastId) {
-      const lastDoc = await db.collection('reports').doc(lastId).get();
-      if (lastDoc.exists) {
-        query = query.startAfter(lastDoc);
-      }
+      const snapshot = await query.get();
+      
+      // Sort in memory to avoid index requirement
+      const reports = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      reports.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      return reports;
+    } catch (error) {
+      console.error('Error getting reports:', error);
+      throw error;
     }
-
-    const snapshot = await query.get();
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
   }
 
   static async createReport(reportData, userId) {
@@ -39,21 +42,26 @@ export class ReportsService {
   }
 
   static async getReportsByLocation(lat, lng, radiusKm = 5) {
-    // Get reports within radius using Firestore geohash or simple distance calc
-    const snapshot = await db.collection('reports')
-      .orderBy('createdAt', 'desc')
-      .get();
+    try {
+      // Get reports within radius using Firestore geohash or simple distance calc
+      const snapshot = await db.collection('reports')
+        .get();
 
-    return snapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(report => {
-        if (!report.latitude || !report.longitude) return false;
-        return this.calculateDistance(
-          lat, lng,
-          report.latitude,
-          report.longitude
-        ) <= radiusKm;
-      });
+      return snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(report => {
+          if (!report.latitude || !report.longitude) return false;
+          return this.calculateDistance(
+            lat, lng,
+            report.latitude,
+            report.longitude
+          ) <= radiusKm;
+        })
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } catch (error) {
+      console.error('Error getting reports by location:', error);
+      throw error;
+    }
   }
 
   static calculateDistance(lat1, lon1, lat2, lon2) {

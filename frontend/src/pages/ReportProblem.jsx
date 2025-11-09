@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { STATES, PROBLEM_CATEGORIES } from '../constants';
 import '../css/ReportProblem.css';
@@ -11,10 +11,30 @@ export default function ReportProblem() {
   });
   
   const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  // Load reports when component mounts
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:4000/api/reports');
+      const data = await response.json();
+      if (data.data) {
+        setLogs(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+      toast.error('Failed to load previous reports');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.category || !formData.location || !formData.description.trim()) {
@@ -22,15 +42,38 @@ export default function ReportProblem() {
       return;
     }
 
-    const newLog = {
-      id: Date.now(),
-      ...formData,
-      timestamp: new Date().toLocaleString()
-    };
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:4000/api/reports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.category,
+          description: formData.description,
+          location: formData.location,
+          category: formData.category
+        }),
+      });
 
-    setLogs([newLog, ...logs]);
-    setFormData({ category: '', location: '', description: '' });
-    toast.success('Problem report submitted successfully!');
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // Refresh the reports list
+      await fetchReports();
+      
+      setFormData({ category: '', location: '', description: '' });
+      toast.success('Problem report submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      toast.error('Failed to submit report');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -90,22 +133,28 @@ export default function ReportProblem() {
         <div className="logs-section">
           <h2>My Logs</h2>
           <div className="logs-container">
-            {logs.length === 0 ? (
+            {loading && logs.length === 0 ? (
+              <p className="no-logs">Loading reports...</p>
+            ) : logs.length === 0 ? (
               <p className="no-logs">No logs yet. Submit a report to get started.</p>
             ) : (
               logs.map((log) => (
                 <div key={log.id} className="log-card">
                   <div className="log-header">
-                    <span className="log-category">{log.category}</span>
-                    <span className="log-timestamp">{log.timestamp}</span>
+                    <span className="log-category">{log.title || log.category}</span>
+                    <span className="log-timestamp">
+                      {log.createdAt ? new Date(log.createdAt).toLocaleString() : log.timestamp}
+                    </span>
                   </div>
-                  <div className="log-location">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                    {log.location}
-                  </div>
+                  {log.location && (
+                    <div className="log-location">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
+                      {log.location}
+                    </div>
+                  )}
                   <p className="log-description">{log.description}</p>
                 </div>
               ))

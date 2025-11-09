@@ -45,6 +45,7 @@
   flex-direction: column;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+}
 
 .chat-header {
   padding: 1rem;
