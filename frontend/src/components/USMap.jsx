@@ -72,10 +72,7 @@ export default function USMap() {
 
   return (
     <div className="map-container">
-      <div className="map-header">
-        <h1>T-Mobile Employee Happiness Index</h1>
-        <p>Branches across the United States</p>
-      </div>
+      {/* Map header removed as it's handled by the parent component */}
 
       <div className="map-controls">
         <button onClick={handleZoomIn} className="zoom-btn">
