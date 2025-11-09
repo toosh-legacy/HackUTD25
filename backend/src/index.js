@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import reportsRouter from './routes/reports.js';
 import statusRouter from './routes/status.js';
 import chatRouter from './routes/chat.js';
+import feedbackRouter from './routes/feedback.js';
 
 // Error handling middleware
 const errorHandler = (err, req, res, next) => {
@@ -32,6 +33,7 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().t
 app.use('/api/reports', reportsRouter);
 app.use('/api/status', statusRouter);
 app.use('/api/chat', chatRouter);
+app.use('/api/feedback', feedbackRouter);
 
 // Error handling
 app.use(errorHandler);

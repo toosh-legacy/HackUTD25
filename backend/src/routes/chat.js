@@ -19,12 +19,18 @@ router.get('/history', verifyAuth, async (req, res) => {
 router.post('/message', async (req, res) => {
   try {
     const { message } = req.body;
+    const userId = req.user?.uid || 'anonymous'; // Fall back to anonymous if no auth
+
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const response = await ChatService.generateAIResponse(message);
-    res.status(200).json({ reply: response });
+    const messageId = await ChatService.sendMessage(userId, message);
+    const messages = await ChatService.getChatHistory(userId, 1); // Get the latest message including AI response
+    res.status(200).json({ 
+      reply: messages[0].isUser ? messages[1]?.message : messages[0].message,
+      messageId 
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useFeedback } from '../hooks/useFeedback';
 import '../css/HappinessGauge.css';
 
-export default function HappinessGauge({ value, onChange, label, isReadOnly = false }) {
-  const [happiness, setHappiness] = useState(value || 50);
+export default function HappinessGauge({ onChange, label, isReadOnly = false }) {
+  const { userFeedback, averageFeedback, submitFeedback, loading } = useFeedback();
+  const [happiness, setHappiness] = useState(50);
+
+  useEffect(() => {
+    if (userFeedback?.rating) {
+      setHappiness(userFeedback.rating);
+    }
+  }, [userFeedback]);
   
-  const currentValue = isReadOnly ? value : happiness;
+  const currentValue = happiness;
 
   const getColor = (val) => {
     if (val < 30) return '#ef4444'; // red
@@ -32,10 +40,15 @@ export default function HappinessGauge({ value, onChange, label, isReadOnly = fa
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (currentValue / 100) * circumference;
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const newValue = Number(e.target.value);
     setHappiness(newValue);
     if (onChange) onChange(newValue);
+    
+    // Debounce the feedback submission
+    if (!loading) {
+      await submitFeedback(newValue);
+    }
   };
 
   return (

@@ -42,6 +42,11 @@ export default function Login() {
     <div className="login-container">
       <div className="login-box">
         <div className="login-header">
+          <img
+            src="/t-mobile-logo.png"
+            alt="T-Mobile"
+            className="login-logo"
+          />
           <h2 className="login-title">
             Sign in to your account
           </h2>

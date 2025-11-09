@@ -23,6 +23,7 @@ html, body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  position: relative;
 }
 
 .main-content {
@@ -31,4 +32,6 @@ html, body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }

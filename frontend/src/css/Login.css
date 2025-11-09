@@ -16,6 +16,11 @@
   margin-bottom: 2rem;
 }
 
+.login-logo {
+  width: 150px;
+  margin-bottom: 1.5rem;
+}
+
 .login-title {
   font-size: 1.875rem;
   font-weight: 700;
