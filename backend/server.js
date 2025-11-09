@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import feedbackRoutes from './src/routes/feedback.js';
 import reportsRoutes from './src/routes/reports.js';
+import announcementsRoutes from './src/routes/announcements.js';
+import serverStatusRoutes from './src/routes/serverStatus.js';
 
 dotenv.config();
 const app = express();
@@ -11,9 +13,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Mount the feedback routes
+// Mount API routes
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/announcements', announcementsRoutes);
+app.use('/api/server-status', serverStatusRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {

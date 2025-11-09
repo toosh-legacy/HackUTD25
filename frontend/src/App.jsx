@@ -7,12 +7,20 @@ import Status from './pages/Status';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import PrivateRoute from './components/PrivateRoute';
-import { AuthProvider } from './contexts/AuthContext';
+import AdminRoute from './components/AdminRoute';
 import ChatBotTab from './components/ChatBotTab';
+import { AuthProvider } from './contexts/AuthContext';
+import { GlobalProvider } from './contexts/GlobalContext';
+import GlobalAlerts from './components/GlobalAlerts';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingScreen from './components/LoadingScreen';
 import { auth, db } from './firebase';
 import './css/App.css';
+
+// Admin Pages
+import AlertsPage from './pages/AlertsPage';
+import AnnouncementsPage from './pages/AnnouncementsPage';
+import ServerStatusPage from './pages/ServerStatusPage';
 
 export default function App() {
   const [initialized, setInitialized] = useState(false);
@@ -69,22 +77,37 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <ErrorBoundary>
-          <div className="app-container">
-            <Navbar />
-            <main className="main-content">
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-                <Route path="/report" element={<PrivateRoute><ReportProblem /></PrivateRoute>} />
-                <Route path="/status" element={<PrivateRoute><Status /></PrivateRoute>} />
-                <Route path="*" element={<Navigate to="/login" replace />} />
-              </Routes>
-            </main>
-            <ChatBotTab />
-          </div>
-        </ErrorBoundary>
+        <GlobalProvider>
+          <ErrorBoundary>
+            <div className="app-container">
+              <Navbar />
+              
+              <GlobalAlerts />
+
+              <main className="main-content">
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+
+                  {/* Private Routes */}
+                  <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+                  <Route path="/report" element={<PrivateRoute><ReportProblem /></PrivateRoute>} />
+                  <Route path="/status" element={<PrivateRoute><Status /></PrivateRoute>} />
+
+                  {/* Admin Routes */}
+                  <Route path="/alerts" element={<AdminRoute><AlertsPage /></AdminRoute>} />
+                  <Route path="/announcements" element={<AdminRoute><AnnouncementsPage /></AdminRoute>} />
+                  <Route path="/server-status" element={<AdminRoute><ServerStatusPage /></AdminRoute>} />
+
+                  <Route path="*" element={<Navigate to="/login" replace />} />
+                </Routes>
+              </main>
+              
+              <ChatBotTab />
+            </div>
+          </ErrorBoundary>
+        </GlobalProvider>
       </AuthProvider>
     </Router>
   );
