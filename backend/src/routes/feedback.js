@@ -7,14 +7,16 @@ const router = express.Router();
 // POST /api/feedback
 router.post('/', async (req, res) => {
   try {
-    const { rating, ...additionalData } = req.body;
-    const userId = req.user?.uid || 'anonymous';
+    const { rating, userId: bodyUserId, ...additionalData } = req.body;
+    const userId = req.user?.uid || bodyUserId || 'anonymous';
 
     if (typeof rating !== 'number' || rating < 0 || rating > 100) {
       return res.status(400).json({ error: 'Invalid rating value' });
     }
 
+    console.log('Saving feedback for user:', userId, 'Rating:', rating);
     const feedback = await FeedbackService.saveFeedback(userId, rating, additionalData);
+    console.log('Feedback saved:', feedback);
     res.status(201).json({ data: feedback });
   } catch (err) {
     console.error('Error saving feedback:', err);
@@ -25,8 +27,10 @@ router.post('/', async (req, res) => {
 // GET /api/feedback/user
 router.get('/user', async (req, res) => {
   try {
-    const userId = req.user?.uid || 'anonymous';
+    const userId = req.user?.uid || req.query.userId || 'anonymous';
+    console.log('Getting feedback for user:', userId);
     const feedback = await FeedbackService.getUserFeedback(userId);
+    console.log('User feedback:', feedback);
     res.json({ data: feedback });
   } catch (err) {
     console.error('Error getting user feedback:', err);
