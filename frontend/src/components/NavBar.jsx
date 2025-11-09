@@ -1,14 +1,23 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useState } from 'react';
 import '../css/Navbar.css';
 
 export default function Navbar() {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
+
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/report', label: 'Report a Problem' },
     { path: '/status', label: 'Status' },
+  ];
+
+  const adminItems = [
+    { path: '/alerts', label: 'Alerts' },
+    { path: '/announcements', label: 'Announcements' },
+    { path: '/server-status', label: 'Server Status' },
   ];
 
   const handleLogout = async () => {
@@ -23,9 +32,12 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-content">
+          {/* 🔷 Logo */}
           <div className="navbar-logo">
             <span>T-Mobile Sentiment Tracker</span>
           </div>
+
+          {/* 🔷 Main Menu */}
           <div className="navbar-menu">
             {navItems.map((item) => (
               <Link
@@ -36,17 +48,49 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
+
+            {/* 🛠️ Admin Dropdown (Only for sai@gmail.com) */}
+            {user?.email === 'sai@gmail.com' && (
+              <div
+                className="navbar-admin-dropdown"
+                onMouseEnter={() => setIsAdminMenuOpen(true)}
+                onMouseLeave={() => setIsAdminMenuOpen(false)}
+              >
+                {/* Make Admin itself a link so it behaves like other nav buttons */}
+                <Link
+                  to={adminItems[0].path}
+                  className={`navbar-button admin-button ${adminItems.some(i => location.pathname === i.path) ? 'active' : ''}`}
+                >
+                  Admin ▾
+                </Link>
+                {isAdminMenuOpen && (
+                  <div className="admin-dropdown-menu">
+                    {adminItems.map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`dropdown-item ${location.pathname === item.path ? 'active' : ''}`}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+
+          {/* 🔷 Profile / Logout */}
           <div className="navbar-profile">
             {user ? (
               <button onClick={handleLogout} className="profile-button">
                 <span className="profile-email">{user.email}</span>
-                <svg 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
                   strokeWidth="2"
                 >
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -56,12 +100,12 @@ export default function Navbar() {
               </button>
             ) : (
               <Link to="/login" className="profile-button">
-                <svg 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
                   strokeWidth="2"
                 >
                   <circle cx="12" cy="8" r="4" />
