@@ -7,15 +7,15 @@ export default function HappinessGauge({ onChange, label, isReadOnly = false, va
   const [happiness, setHappiness] = useState(50);
 
   useEffect(() => {
-    // If a value prop is provided (for overall happiness), use it
-    if (value !== undefined && value !== null) {
+    // For read-only gauges (overall happiness), use the value prop
+    if (isReadOnly && value !== undefined && value !== null) {
       setHappiness(value);
     } 
-    // Otherwise, use user's feedback (for personal happiness)
-    else if (userFeedback?.rating) {
+    // For interactive gauges (personal happiness), ONLY use userFeedback
+    else if (!isReadOnly && userFeedback?.rating !== undefined) {
       setHappiness(userFeedback.rating);
     }
-  }, [userFeedback, value]);
+  }, [userFeedback?.rating, value, isReadOnly]);
   
   const currentValue = happiness;
 

@@ -40,6 +40,9 @@
   justify-content: center;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(226, 0, 116, 0.2);
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
 }
 
 .zoom-btn:hover {
