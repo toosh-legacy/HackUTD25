@@ -1,6 +1,6 @@
 /* Server Status Page Styles */
 .server-status-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -12,6 +12,144 @@
   margin-bottom: 2rem;
   border-bottom: 3px solid #e20074;
   padding-bottom: 0.5rem;
+}
+
+/* Locations Grid */
+.locations-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.state-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.state-header {
+  color: #e20074;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.city-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.city-card {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.city-card:hover {
+  border-color: #e20074;
+  box-shadow: 0 4px 12px rgba(226, 0, 116, 0.15);
+}
+
+.city-info {
+  margin-bottom: 1rem;
+}
+
+.city-info h4 {
+  color: #1f2937;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.status-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.status-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.status-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.status-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.status-online {
+  color: #047857;
+  border-color: #10b981;
+}
+
+.status-online:not(:disabled):hover {
+  background: #d1fae5;
+}
+
+.status-online:disabled {
+  background: #d1fae5;
+  font-weight: 700;
+}
+
+.status-maintenance {
+  color: #b45309;
+  border-color: #f59e0b;
+}
+
+.status-maintenance:not(:disabled):hover {
+  background: #fef3c7;
+}
+
+.status-maintenance:disabled {
+  background: #fef3c7;
+  font-weight: 700;
+}
+
+.status-down {
+  color: #b91c1c;
+  border-color: #ef4444;
+}
+
+.status-down:not(:disabled):hover {
+  background: #fee2e2;
+}
+
+.status-down:disabled {
+  background: #fee2e2;
+  font-weight: 700;
+}
+
+.updating-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #e20074;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Status Display Section */
