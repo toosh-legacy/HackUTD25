@@ -1,4 +1,4 @@
-.map-container {
+.status-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6,7 +6,7 @@
   padding: 4rem 1rem;
 }
 
-.map-container p {
+.status-container p {
   color: #374151;
   font-size: 1.25rem;
 }

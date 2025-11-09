@@ -13,8 +13,8 @@ export default function HappinessGauge({ value, onChange, label, isReadOnly = fa
   };
 
   const getEmoji = (val) => {
-    if (val < 20) return '😢';
-    if (val < 40) return '😕';
+    if (val < 20) return '💀';
+    if (val < 40) return '😬';
     if (val < 60) return '😐';
     if (val < 80) return '🙂';
     return '😄';

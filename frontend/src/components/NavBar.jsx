@@ -4,7 +4,6 @@ export default function Navbar({ currentPage, onNavigate }) {
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'report', label: 'Report a Problem' },
-    { id: 'map', label: 'Map' },
     { id: 'status', label: 'Status' },
   ];
 
