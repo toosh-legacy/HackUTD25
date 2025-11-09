@@ -103,3 +103,22 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+.auth-switch {
+  margin-top: 1rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.auth-link {
+  color: #e20074;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.auth-link:hover {
+  color: #c8006a;
+  text-decoration: underline;
+}
